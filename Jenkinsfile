@@ -13,13 +13,13 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-               bat 'python -m pip install -r requirements.txt'
+          bat '"C:\Users\EL__Mehdi\AppData\Local\Programs\Python\Python310\python.exe" -m pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'pytest --junitxml=pytest-report.xml'
+                bat '"C:\Users\EL__Mehdi\AppData\Local\Programs\Python\Python310\python.exe" -m pytest --junitxml=pytest-report.xml'
             }
         }
 
