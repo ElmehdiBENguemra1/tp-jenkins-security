@@ -33,7 +33,7 @@ pipeline {
 
         stage('SCA Scan - Dependency Check') {
             steps {
-                dependencyCheck additionalArguments: '--scan . --format XML --format HTML --out . --failOnCVSS 7', odcInstallation: 'dependency-check'
+                dependencyCheck additionalArguments: '--scan . --format XML --format HTML --out . --noupdate --failOnCVSS 7', odcInstallation: 'dependency-check'
             }
         }
 
