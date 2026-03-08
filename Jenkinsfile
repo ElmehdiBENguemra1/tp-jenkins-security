@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK21'
+    }
+
+    environment {
+        SCANNER_HOME = tool 'SonarScanner'
+    }
+
+    stages {
+
+        stage('Install Dependencies') {
+            steps {
+                bat 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                bat 'pytest --junitxml=pytest-report.xml'
+            }
+        }
+
+        stage('SAST Scan - SonarQube') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    bat "\"%SCANNER_HOME%\\bin\\sonar-scanner.bat\""
+                }
+            }
+        }
+
+        stage('SCA Scan - Dependency Check') {
+            steps {
+                dependencyCheck additionalArguments: '--scan . --format XML --format HTML --out . --failOnCVSS 7', odcInstallation: 'dependency-check'
+            }
+        }
+
+        stage('Publish Reports') {
+            steps {
+                dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit 'pytest-report.xml'
+        }
+    }
+}
